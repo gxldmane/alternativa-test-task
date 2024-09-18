@@ -10,6 +10,9 @@ class CartService
     public function addToCart(Product $product, int $productId, $cart)
     {
         if (isset($cart[$productId])) {
+            if ($product->stock < $cart[$productId]['quantity'] + 1) {
+                return redirect()->back()->with('error', 'Недостаточно товара в наличии.');
+            }
             $cart[$productId]['quantity']++;
         } else {
             $cart[$productId] = [

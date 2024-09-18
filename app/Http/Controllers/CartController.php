@@ -10,7 +10,6 @@ class CartController extends Controller
 {
     public function __construct(private CartService $cartService) {}
 
-    // Метод для отображения корзины
     public function show()
     {
         $cart = session()->get('cart', []);
@@ -18,7 +17,6 @@ class CartController extends Controller
         return view('cart.index', compact('cart'));
     }
 
-    // Метод для добавления товара в корзину
     public function addToCart(Request $request, $productId)
     {
         $product = Product::findOrFail($productId);
@@ -36,6 +34,17 @@ class CartController extends Controller
 
     public function update(Request $request, $productId)
     {
+        $quantity = $request->input('quantity');
+        $product = Product::find($productId);
+
+        if (! $product) {
+            return redirect()->route('cart.index')->with('error', 'Товар не найден.');
+        }
+
+        if ($quantity > $product->stock) {
+            return redirect()->route('cart.index')->with('error', 'Недостаточно товара в наличии.');
+        }
+
         $cart = session()->get('cart', []);
         if (isset($cart[$productId])) {
             $this->cartService->updateCart($productId, $cart, $request);
@@ -50,8 +59,8 @@ class CartController extends Controller
     {
         $cart = session()->get('cart', []);
 
-        if (isset($cart[$$productId])) {
-            unset($cart[$$productId]);
+        if (isset($cart[$productId])) {
+            unset($cart[$productId]);
             session()->put('cart', $cart);
 
             return redirect()->back()->with('success', 'Товар удален из корзины.');

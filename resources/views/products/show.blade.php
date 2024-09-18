@@ -1,6 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
+    @if(session('error'))
+        <div class="bg-red-500 text-white p-4 mb-4 rounded">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if(session('success'))
+        <div class="bg-green-500 text-white p-4 mb-4 rounded">
+            {{ session('success') }}
+        </div>
+    @endif
+
+
     <h1 class="text-3xl font-bold mb-4">{{ $product->name }}</h1>
     <p class="text-lg">Цена: {{ $product->price }} руб.</p>
     <p class="text-lg">Остаток на складе: {{ $product->stock }}</p>
